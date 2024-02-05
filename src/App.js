@@ -1,18 +1,117 @@
+import React, { useState } from 'react';
 import { Amplify } from 'aws-amplify';
-import type { WithAuthenticatorProps } from '@aws-amplify/ui-react';
-import { withAuthenticator } from '@aws-amplify/ui-react';
+import { Authenticator, withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import axios from 'axios';
 
 import awsconfig from './aws-exports';
-
 Amplify.configure(awsconfig);
 
-export function App({ signOut, user }: WithAuthenticatorProps) {
+// Chart.js modüllerinin kaydı
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+function App() {
+  const [fonKodu, setFonKodu] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [kisiSayisiData, setKisiSayisiData] = useState({});
+  const [fiyatData, setFiyatData] = useState({});
+  const [toplamDegerData, setToplamDegerData] = useState({});
+  const [paySayisiData, setPaySayisiData] = useState({});
+  const [fundName, setFundName] = useState('');
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`https://5ygl1p232h.execute-api.eu-west-3.amazonaws.com/test/yatirimci?FonKodu=${fonKodu}`, {
+        headers: {
+          'x-api-key': apiKey
+        }
+      });
+      const data = response.data;
+  
+      setFundName(data[0]["Fon Adı"]);
+  
+      setKisiSayisiData({
+        labels: data.map(item => item.Tarih),
+        datasets: [{
+          label: 'Kişi Sayısı',
+          data: data.map(item => item["Kişi Sayısı"]),
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
+      });
+  
+      setFiyatData({
+        labels: data.map(item => item.Tarih),
+        datasets: [{
+          label: 'Fiyat',
+          data: data.map(item => parseFloat(item["Fiyat"].replace(/\./g, '').replace(/,/g, '.'))),
+          borderColor: 'rgb(255, 99, 132)',
+          tension: 0.1
+        }]
+      });
+  
+      setToplamDegerData({
+        labels: data.map(item => item.Tarih),
+        datasets: [{
+          label: 'Fon Toplam Değer',
+          data: data.map(item => parseFloat(item["Fon Toplam Değer"].replace(/\./g, '').replace(/,/g, '.'))),
+          borderColor: 'rgb(54, 162, 235)',
+          tension: 0.1
+        }]
+      });
+  
+      setPaySayisiData({
+        labels: data.map(item => item.Tarih),
+        datasets: [{
+          label: 'Tedavüldeki Pay Sayısı',
+          data: data.map(item => parseFloat(item["Tedavüldeki Pay Sayısı"].replace(/\./g, '').replace(/,/g, '.'))),
+          borderColor: 'rgb(255, 206, 86)',
+          tension: 0.1
+        }]
+      });
+  
+    } catch (error) {
+      console.error('Veri çekme hatası', error);
+    }
+  };
+
   return (
-    <>
-      <h1>Hello {user?.username}</h1>
-      <button onClick={signOut}>Sign out</button>
-    </>
+    <Authenticator>
+      {({ signOut, user }) => (
+        <div className="App">
+          {user && (
+            <>
+              {/* Kullanıcı giriş yaptıysa uygulama içeriğini göster */}
+              <input
+                type="text"
+                value={fonKodu}
+                onChange={(e) => setFonKodu(e.target.value.toUpperCase())}
+                placeholder="Fon Kodu Girin"
+              />
+              <input
+                type="text"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="API Anahtarı Girin"
+              />
+              <button onClick={fetchData}>Veriyi Çek</button>
+
+              <div>
+                {fundName && <h2>{fundName}</h2>}
+                {kisiSayisiData.labels && <Line data={kisiSayisiData} />}
+                {fiyatData.labels && <Line data={fiyatData} />}
+                {toplamDegerData.labels && <Line data={toplamDegerData} />}
+                {paySayisiData.labels && <Line data={paySayisiData} />}
+              </div>
+
+              <button onClick={signOut}>Sign Out</button>
+            </>
+          )}
+        </div>
+      )}
+    </Authenticator>
   );
 }
 
