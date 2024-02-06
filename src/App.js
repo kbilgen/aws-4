@@ -12,6 +12,15 @@ Amplify.configure(awsconfig);
 // Chart.js modüllerinin kaydı
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+function Navbar({ signOut }) {
+  return (
+    <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem' }}>
+      <h1>Your App Name</h1>
+      <button onClick={signOut}>Sign Out</button>
+    </nav>
+  );
+}
+
 function App() {
   const [fonKodu, setFonKodu] = useState('');
   const [apiKey, setApiKey] = useState('');
@@ -83,6 +92,7 @@ function App() {
         <div className="App">
           {user && (
             <>
+              <Navbar signOut={signOut} />
               {/* Kullanıcı giriş yaptıysa uygulama içeriğini göster */}
               <input
                 type="text"
@@ -105,8 +115,6 @@ function App() {
                 {toplamDegerData.labels && <Line data={toplamDegerData} />}
                 {paySayisiData.labels && <Line data={paySayisiData} />}
               </div>
-
-              <button onClick={signOut}>Sign Out</button>
             </>
           )}
         </div>
