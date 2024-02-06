@@ -8,6 +8,8 @@ import '@aws-amplify/ui-react/styles.css';
 
 import Navbar from './Navbar';
 import Grafik from './Grafik';
+import Raporlar from './Raporlar'; // Yeni sayfayı import et
+
 
 import awsconfig from './aws-exports';
 Amplify.configure(awsconfig);
@@ -23,6 +25,7 @@ function App() {
                 <Navbar signOut={signOut} />
                 <Routes>
                   <Route path="/Grafik" element={<Grafik />} />
+                  <Route path="/Raporlar" element={<Raporlar />} /> {/* Yeni Route ekle */}
                 </Routes>
               </>
             )}
