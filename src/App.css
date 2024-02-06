@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+.App {
+  background-image: url('./images/background.jpg');
+  background-size: cover; /* Resmi kaplayacak şekilde ayarla */
+  background-repeat: no-repeat; /* Resmi tekrar etme */
+  background-position: center; /* Resmi ortala */
+  min-height: 100vh; /* En az viewport yüksekliğinde olmasını sağla */
+}

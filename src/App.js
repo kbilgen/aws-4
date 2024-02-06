@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Amplify } from 'aws-amplify';
 import { Authenticator, withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
+// import './App.css'; // Eğer bu satır zaten varsa tekrar eklemenize gerek yok.
 
 import Navbar from './Navbar';
 import Grafik from './Grafik';
