@@ -1,5 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  ThemeProvider,
+  Theme,
+} from '@aws-amplify/ui-react';
+
+const theme: Theme = {
+  name: 'table-theme',
+  tokens: {
+    components: {
+      table: {
+        row: {
+          hover: {
+            backgroundColor: { value: '{colors.blue.20}' },
+          },
+          striped: {
+            backgroundColor: { value: '{colors.blue.10}' },
+          },
+        },
+        header: {
+          color: { value: '{colors.blue.80}' },
+          fontSize: { value: '{fontSizes.xl}' },
+        },
+        data: {
+          fontWeight: { value: '{fontWeights.semibold}' },
+        },
+      },
+    },
+  },
+};
 
 const Raporlar = () => {
   const [raporlar, setRaporlar] = useState([]);
@@ -18,26 +52,27 @@ const Raporlar = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Raporlar Sayfası</h1>
-      <p>Bu sayfada raporlarınızı görüntüleyebilirsiniz.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Fon Adı</th>
-            <th>Değişim</th>
-          </tr>
-        </thead>
-        <tbody>
+    <ThemeProvider theme={theme} colorMode="light">
+      <h2>Son 30 Gün İçinde Kişi Sayısı En Fazla Değişen İlk 10 Fon</h2>
+      <Table highlightOnHover variation="striped">
+        <TableHead>
+          <TableRow>
+            <TableCell as="th">Fon Kodu</TableCell>
+            <TableCell as="th">Fon Adı</TableCell>
+            <TableCell as="th">Değişim</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {raporlar.map((rapor, index) => (
-            <tr key={index}>
-              <td>{rapor['Fon Adı']}</td>
-              <td>{rapor['Değişim']}</td>
-            </tr>
+            <TableRow key={index}>
+              <TableCell>{rapor['Fon Kodu']}</TableCell>
+              <TableCell>{rapor['Fon Adı']}</TableCell>
+              <TableCell>{rapor['Değişim']}</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </ThemeProvider>
   );
 };
 
